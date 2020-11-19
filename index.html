@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js" integrity="sha512-WNLxfP/8cVYL9sj8Jnp6et0BkubLP31jhTG9vhL/F5uEZmg5wEzKoXp1kJslzPQWwPT1eyMiSxlKCgzHLOTOTQ==" crossorigin="anonymous"></script>
+
+    <title>Tarefas</title>
+</head>
+<body>
+    <div style="background: rgb(2,0,36);">
+        <div class='page'>
+            <navbar>
+                <button class='btn btn-success' id='add'>Adicionar</button>
+                <h1>Tarefas</h1>
+                <div></div>
+            </navbar>
+            <div class='content'>
+                <div class='container'>
+                    <div class="row" data-list>
+                        <!-- Tarefas -->
+                        <!-- <div class='col-lg-4 mt-4'>
+                            <div class="card">
+                                <div class='card-footer'>
+                                    <H6 class='text-muted'>Titulo</H6>
+                                    <div class='content bg-white shadow-sm'>
+                                        Desenvolver a trello
+                                    </div>
+                                    <div class='content bg-white shadow-sm'>
+                                        Desenvolver a trello
+                                    </div>
+                                    <div class='content bg-white shadow-sm'>
+                                        Desenvolver a trello
+                                    </div>
+                                    <small class='text-muted'>Adicionar tarefa</small>
+                                </div>
+                              </div>        
+                        </div> -->
+                        <!-- Tarefas/ -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+
+const listComponent = (data) => {
+ return data.map((item) => {
+  return (
+   `
+   <div class='col-lg-4 mt-4' id="card_id${item.id_card}">
+                        <div class="card">
+                            <div class='card-footer'>
+                                <input class='text-muted input' onchange='editarTitulo("${item.id_card}", this)' value='${(item.titulo_card == null) ? "Titulo" : item.titulo_card}' style="
+    width: 90% !important;
+">
+                                <small class='clicavel' onclick="deleteCard('${item.id_card}')">
+            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-trash" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+  <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+</svg>
+        </small>
+                                <div id='card_tarefa${item.id_card}'>
+                                
+                                </div>
+                                <small class='clicavel' onclick="addTarefa('${item.id_card}')">Adicionar tarefa</small>
+                            </div>
+                          </div>        
+                    </div>
+
+
+   `
+  )
+ }).join('')
+}
+
+const listTarefas = (data) => {
+ return
+   `
+
+   <div class='content bg-white shadow-sm'>
+        Desenvolver a trello
+    </div>
+
+   `
+}   
+        function deleteTarefa(id) {
+            $("#tarefa_id"+id).remove()
+            $.ajax({
+                method: "POST",
+                url:"php/apagarTarefa.php",
+                data: {
+                    "id": id
+                } 
+            }).done(r => {
+                console.log(r);
+            })
+        }
+
+        function deleteCard(id) {
+            $("#card_id"+id).remove()
+            $.ajax({
+                method: "POST",
+                url:"php/apagarCard.php",
+                data: {
+                    "id": id
+                } 
+            }).done(r => {
+                console.log(r);
+            })
+        }
+
+        function editarTitulo(id, e) {
+            $.ajax({
+                method: "POST",
+                data: {
+                    "titulo": e.value,
+                    "id": id
+                },
+                url: "php/titulo.php"
+            }).done(r => {
+                //
+            })
+        }
+        function editarTarefa(id, e) {
+            $.ajax({
+                method: "POST",
+                data: {
+                    "tarefa": e.value,
+                    "id": id
+                },
+                url: "php/tarefa.php"
+            })
+        }
+        function getCards() {
+            $.ajax({
+                method: "GET",
+                url: "php/getcards.php"
+            }).done(r => {
+                resultado = JSON.parse(r);
+                console.log(resultado);
+                const el = document.querySelector('[data-list]')
+                el.innerHTML = listComponent(resultado)
+                getTarefas()
+
+            })
+        }
+
+        function addTarefa(id) {
+            $.ajax({
+                method: "POST",
+                url: "php/criartarefa.php",
+                data: {
+                    id: id
+                }
+            }).done(r => {
+                console.log(r);
+                getCards()
+            })
+        }
+
+        function getTarefas() {
+            $.ajax({
+                method: "GET",
+                url: "php/getTarefas.php"
+            }).done(r => {
+                let resultado = JSON.parse(r);
+                resultado.forEach(element => {
+                    const el = $('#card_tarefa'+element.id_card)
+                    el.append(`
+    <div class='content bg-white shadow-sm' id='tarefa_id${element.id_tarefa}'>
+        <textarea class='input' onkeyup="editarTarefa('${element.id_tarefa}', this)">${(element.tarefa_tarefa == null) ? "" : element.tarefa_tarefa}</textarea>
+        <small class='clicavel' onclick="deleteTarefa('${element.id_tarefa}')">
+            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-trash" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+  <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4L4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+</svg>
+        </small>
+    </div>
+                    `);
+                });
+            })
+        }
+
+        $(document).ready(() => {
+            getCards();
+        })
+        $("#add").click(() => {
+            $.ajax({
+                method: "GET",
+                url: "php/adicionarCard.php"
+            })
+            .done(r => {
+                if(r == 1) {
+                    getCards();
+                }
+            })
+        })
+    </script>
+</body>
+</html>
